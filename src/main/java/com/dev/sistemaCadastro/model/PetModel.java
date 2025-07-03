@@ -4,6 +4,7 @@ package com.dev.sistemaCadastro.model;
 import com.dev.sistemaCadastro.domain.Gender;
 import com.dev.sistemaCadastro.domain.TypePet;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +13,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
-@Table(name="PETS")
+@Table(name = "PETS")
 @Getter
 @Setter
 public class PetModel implements Serializable {
@@ -24,7 +25,7 @@ public class PetModel implements Serializable {
     String lastName;
     Integer age;
     BigDecimal weight;
-    String  breed;
+    String breed;
     Gender gender;
     TypePet typePet;
 

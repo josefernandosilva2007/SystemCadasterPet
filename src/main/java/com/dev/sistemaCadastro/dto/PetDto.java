@@ -19,5 +19,4 @@ public class PetDto {
     String  breed;
     Gender gender;
     TypePet typePet;
-
 }

@@ -10,13 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class PetService {
@@ -46,5 +46,25 @@ public class PetService {
         if (!filterList.isEmpty()) return ResponseEntity.status(HttpStatus.OK).body(filterList);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pet Not Found");
+    }
+
+    public ResponseEntity<Object> deletePet(UUID id){
+        Optional<PetModel> petOp = petRepository.findById(id);
+        if (petOp.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pet not Found");
+        }
+        petRepository.delete(petOp.get());
+        return ResponseEntity.status(HttpStatus.OK).body("Pet Delete Sucessfully");
+    }
+
+    public ResponseEntity<Object> updatePet(UUID id, PetDto petDto){
+        Optional<PetModel> petOp = petRepository.findById(id);
+        if (petOp.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pet NOT FOUND");
+        }
+        var petModel = new PetModel();
+        BeanUtils.copyProperties(petDto, petModel);
+        deletePet(id);
+        return ResponseEntity.status(HttpStatus.CREATED).body(petRepository.save(petModel));
     }
 }
