@@ -6,11 +6,11 @@ import com.dev.sistemaCadastro.model.PetModel;
 import com.dev.sistemaCadastro.service.PetService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 public class PetController {
@@ -25,16 +25,16 @@ public class PetController {
 
     @GetMapping("/pet")
     public ResponseEntity<List<PetModel>> getAllPets(){
-        return petService.getAllPets();
+        return ResponseEntity.status(HttpStatus.OK).body(petService.getAllPets());
     }
 
     @DeleteMapping("/pet/{id}")
-    public ResponseEntity<Object> deletePetByID(@PathVariable(value = "id") UUID id){
+    public ResponseEntity<Object> deletePetByID(@PathVariable(value = "id") Long id){
         return petService.deletePet(id);
     }
 
     @PutMapping("/pet/{id}")
-    public ResponseEntity<Object> updatePetByID(@PathVariable(value = "id") UUID id,
+    public ResponseEntity<Object> updatePetByID(@PathVariable(value = "id") Long id,
                                                 @RequestBody @Valid PetDto petDto){
         return petService.updatePet(id,petDto);
     }

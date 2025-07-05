@@ -20,7 +20,7 @@ public class PetModel implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    UUID id;
+    Long id;
     String firstName;
     String lastName;
     Integer age;

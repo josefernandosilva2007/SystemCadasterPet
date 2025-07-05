@@ -1,6 +1,7 @@
 package com.dev.sistemaCadastro.domain;
 
 import com.dev.sistemaCadastro.dto.PetDto;
+import com.dev.sistemaCadastro.exceptions.ResourceNotFoundException;
 import com.dev.sistemaCadastro.service.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -19,40 +20,44 @@ public class Menu implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        int op = -1;
-        while(op != 0){
+        while (true) {
             showMenu();
-            try {
-                op = Integer.parseInt(input.nextLine());
-
-                switch (op){
-
-                    case 1 -> saveNewPet();
-                    case 0 -> System.out.println("Saindo do sistema");
-                    default -> System.out.println("Digite um opção valida");
-                }
-
-            }catch (NumberFormatException e){
-                System.out.println("ERRO: Digite um numero: " + e);
-                op = -1;
+            String op = input.nextLine();
+            switch (op) {
+                case "1":
+                    saveNewPet();
+                    break;
+                case "3":
+                    deletePetByID();
+                    break;
+                case "4":
+                    showAllPets();
+                    break;
+                case "0":
+                    System.out.println("SAINDO DO SISTEMA");
+                    input.close();
+                    return;
+                default:
+                    System.err.println("OPCAO INVALIDA APERTE ENTER PARA TENTAR NOVAMENTE");
+                    input.nextLine();
+                    break;
             }
         }
-        input.close();
     }
 
 
-    public void showMenu(){
+    public void showMenu() {
         System.out.println("---------------------------- MENU ----------------------------\n" +
                 "1. Cadastrar um novo pet\n" +
                 "2. Alterar os dados do pet cadastrado\n" +
                 "3. Deletar um pet cadastrado\n" +
                 "4. Listar todos os pets cadastrados\n" +
                 "5. Listar pets por algum critério (idade, nome, raça)\n" +
-                "0. Sair\n"+
+                "0. Sair\n" +
                 "ESCOLHA UMA OPÇÂO: ");
     }
 
-    public void saveNewPet(){
+    public void saveNewPet() {
         System.out.println("Nome: ");
         String firstName = input.nextLine();
         System.out.println("Sobrenome: ");
@@ -81,6 +86,49 @@ public class Menu implements CommandLineRunner {
         petService.savePet(petDto);
     }
 
+    public void showAllPets() {
+        petService.getAllPetsDTO();
+
+    }
+
+    public void deletePetByID() throws Exception {
+
+        try{
+            System.out.println("DIGITE O ID QUE VC DESEJA DELETAR: ");
+            Long id = Long.parseLong(input.nextLine());
+            petService.findByID(id);
+            System.out.println("Tem certeza? y/n");
+            String asw = input.nextLine().toLowerCase();
+            if (!asw.equals("y") && !asw.equals("n")) {
+                System.out.println("DIGITE UMA OPÇÃO VALIDA");
+                deletePetByID();
+            }
+            if (asw.equals("n")) {
+                run();
+            }
+            petService.deletePet(id);
+            System.out.println("Pet deletado com sucesso");
+        }catch (ResourceNotFoundException e){
+            System.out.println(e.getMessage());
+        }
+
+
+
+        System.out.println("DIGITE O ID QUE VC DESEJA DELETAR: ");
+        Long id = Long.parseLong(input.nextLine());
+        petService.findByID(id);
+        System.out.println("Tem certeza? y/n");
+        String asw = input.nextLine().toLowerCase();
+        if (!asw.equals("y") && !asw.equals("n")) {
+            System.out.println("DIGITE UMA OPÇÃO VALIDA");
+            deletePetByID();
+        }
+        if (asw.equals("n")) {
+            run();
+        }
+        petService.deletePet(id);
+        System.out.println("Pet deletado com sucesso");
+    }
 
 
 }

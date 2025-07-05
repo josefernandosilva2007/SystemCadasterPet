@@ -3,6 +3,7 @@ package com.dev.sistemaCadastro.dto;
 
 import com.dev.sistemaCadastro.domain.Gender;
 import com.dev.sistemaCadastro.domain.TypePet;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,13 +11,15 @@ import java.math.BigDecimal;
 
 
 @Builder
+
 @Data
 public class PetDto {
-    String firstName;
-    String lastName;
-    Integer age;
-    BigDecimal weight;
-    String  breed;
-    Gender gender;
-    TypePet typePet;
+    public String firstName;
+    public String lastName;
+    public Integer age;
+    public BigDecimal weight;
+    public String  breed;
+    public Gender gender;
+    public TypePet typePet;
 }
+
