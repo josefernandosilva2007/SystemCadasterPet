@@ -2,12 +2,14 @@ package com.dev.sistemaCadastro.domain;
 
 import com.dev.sistemaCadastro.dto.PetDto;
 import com.dev.sistemaCadastro.exceptions.ResourceNotFoundException;
+import com.dev.sistemaCadastro.model.PetModel;
 import com.dev.sistemaCadastro.service.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Scanner;
 
 @Component
@@ -36,6 +38,9 @@ public class Menu implements CommandLineRunner {
                 case "4":
                     showAllPets();
                     break;
+                case "5":
+                    filterSearch();
+                    break;
                 case "0":
                     System.out.println("SAINDO DO SISTEMA");
                     input.close();
@@ -49,7 +54,7 @@ public class Menu implements CommandLineRunner {
     }
 
 
-    public void showMenu() {
+    private void showMenu() {
         System.out.println("---------------------------- MENU ----------------------------\n" +
                 "1. Cadastrar um novo pet\n" +
                 "2. Alterar os dados do pet cadastrado\n" +
@@ -60,7 +65,7 @@ public class Menu implements CommandLineRunner {
                 "ESCOLHA UMA OPÇÂO: ");
     }
 
-    public void saveNewPet() {
+    private void saveNewPet() {
         System.out.println("Nome: ");
         String firstName = input.nextLine();
         System.out.println("Sobrenome: ");
@@ -89,12 +94,12 @@ public class Menu implements CommandLineRunner {
         petService.savePet(petDto);
     }
 
-    public void showAllPets() {
+    private void showAllPets() {
         petService.getAllPetsDTO();
 
     }
 
-    public void deletePetByID() throws Exception {
+    private void deletePetByID() throws Exception {
 
         try {
             System.out.println("DIGITE O ID QUE VC DESEJA DELETAR: ");
@@ -132,38 +137,38 @@ public class Menu implements CommandLineRunner {
         System.out.println("Pet deletado com sucesso");
     }
 
-    public void updatePetByID() {
-        try{
+    private void updatePetByID() {
+        try {
             System.out.println("DIGITE O ID QUE VC DESEJA ATUALIZAR: ");
             Long id = Long.parseLong(input.nextLine());
             PetDto byID = petService.findByID(id);
             System.out.println("Nome: ");
             String firstName = input.nextLine();
-            if (firstName.isEmpty()){
+            if (firstName.isEmpty()) {
                 firstName = byID.getFirstName();
             }
             System.out.println("Sobrenome: ");
             String lastName = input.nextLine();
-            if (lastName.isEmpty()){
+            if (lastName.isEmpty()) {
                 lastName = byID.getLastName();
             }
             System.out.println("Idade: ");
             String ageString = input.nextLine();
             Integer age;
-            if (!ageString.isEmpty()){
+            if (!ageString.isEmpty()) {
                 age = Integer.parseInt(ageString);
             }
             age = byID.getAge();
             System.out.println("Peso: ");
             String weightString = input.nextLine();
             BigDecimal weight;
-            if (!weightString.isEmpty()){
+            if (!weightString.isEmpty()) {
                 weight = BigDecimal.valueOf(Double.parseDouble(weightString));
             }
             weight = byID.getWeight();
             System.out.println("Raça: ");
             String breed = input.nextLine();
-            if (breed.isEmpty()){
+            if (breed.isEmpty()) {
                 breed = byID.getBreed();
             }
             System.out.println("Genero [OBRIGATORIO]: ");
@@ -183,8 +188,112 @@ public class Menu implements CommandLineRunner {
             petService.updatePet(id, petDto);
 
 
-        }catch (ResourceNotFoundException e) {
+        } catch (ResourceNotFoundException e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    private void filterSearch() {
+        filterSearchByGender(input.nextLine());
+    }
+
+    private void filterSearchByName(String search) {
+        List<PetModel> allPets = petService.getAllPets();
+        for (PetModel petModel : allPets) {
+            PetDto build = PetDto.builder().firstName(petModel.getFirstName())
+                    .lastName(petModel.getLastName())
+                    .age(petModel.getAge())
+                    .weight(petModel.getWeight())
+                    .breed(petModel.getBreed())
+                    .gender(petModel.getGender())
+                    .typePet(petModel.getTypePet())
+                    .build();
+            if (build.getFirstName().contains(search)) System.out.println(build);
+            if (build.getLastName().contains(search)) System.out.println(build);
+        }
+    }
+
+    private void filterSearchByAge(String search) {
+        List<PetModel> allPets = petService.getAllPets();
+        for (PetModel petModel : allPets) {
+            PetDto build = PetDto.builder().firstName(petModel.getFirstName())
+                    .lastName(petModel.getLastName())
+                    .age(petModel.getAge())
+                    .weight(petModel.getWeight())
+                    .breed(petModel.getBreed())
+                    .gender(petModel.getGender())
+                    .typePet(petModel.getTypePet())
+                    .build();
+            if (build.getAge().equals(Integer.parseInt(search))) System.out.println(build);
+        }
+    }
+
+    private void filterSearchByWeight(String search) {
+        List<PetModel> allPets = petService.getAllPets();
+        BigDecimal res = BigDecimal.valueOf(Double.parseDouble(search));
+        for (PetModel petModel : allPets) {
+            PetDto build = PetDto.builder().firstName(petModel.getFirstName())
+                    .lastName(petModel.getLastName())
+                    .age(petModel.getAge())
+                    .weight(petModel.getWeight())
+                    .breed(petModel.getBreed())
+                    .gender(petModel.getGender())
+                    .typePet(petModel.getTypePet())
+                    .build();
+
+            if (build.getWeight().equals(res)) ;
+            System.out.println(build);
+        }
+    }
+
+    private void filterSearchByBreed(String search) {
+        List<PetModel> allPets = petService.getAllPets();
+        for (PetModel petModel : allPets) {
+            PetDto build = PetDto.builder().firstName(petModel.getFirstName())
+                    .lastName(petModel.getLastName())
+                    .age(petModel.getAge())
+                    .weight(petModel.getWeight())
+                    .breed(petModel.getBreed())
+                    .gender(petModel.getGender())
+                    .typePet(petModel.getTypePet())
+                    .build();
+
+            if (build.getBreed().equals(search)) ;
+            System.out.println(build);
+        }
+    }
+
+    private void filterSearchByGender(String search) {
+        List<PetModel> allPets = petService.getAllPets();
+        for (PetModel petModel : allPets) {
+            PetDto build = PetDto.builder().firstName(petModel.getFirstName())
+                    .lastName(petModel.getLastName())
+                    .age(petModel.getAge())
+                    .weight(petModel.getWeight())
+                    .breed(petModel.getBreed())
+                    .gender(petModel.getGender())
+                    .typePet(petModel.getTypePet())
+                    .build();
+
+            if (build.getGender().equals(Gender.valueOf(search.toUpperCase())));
+            System.out.println(build);
+        }
+    }
+
+    private void filterSearchByTypePet(String search) {
+        List<PetModel> allPets = petService.getAllPets();
+        for (PetModel petModel : allPets) {
+            PetDto build = PetDto.builder().firstName(petModel.getFirstName())
+                    .lastName(petModel.getLastName())
+                    .age(petModel.getAge())
+                    .weight(petModel.getWeight())
+                    .breed(petModel.getBreed())
+                    .gender(petModel.getGender())
+                    .typePet(petModel.getTypePet())
+                    .build();
+
+            if (build.getTypePet().equals(TypePet.valueOf(search.toUpperCase())));
+            System.out.println(build);
         }
     }
 
