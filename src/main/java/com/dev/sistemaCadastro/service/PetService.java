@@ -58,7 +58,6 @@ public class PetService {
     @Transactional(readOnly = true)
     public PetDto findByID(Long id) {
         PetModel petModel = petRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Pet nao encontrado"));
-
         return  PetDto.builder().firstName(petModel.getFirstName())
                 .lastName(petModel.getLastName())
                 .age(petModel.getAge())

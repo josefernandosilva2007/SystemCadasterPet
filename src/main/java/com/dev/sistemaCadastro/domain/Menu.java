@@ -27,6 +27,9 @@ public class Menu implements CommandLineRunner {
                 case "1":
                     saveNewPet();
                     break;
+                case "2":
+                    updatePetByID();
+                    break;
                 case "3":
                     deletePetByID();
                     break;
@@ -93,7 +96,7 @@ public class Menu implements CommandLineRunner {
 
     public void deletePetByID() throws Exception {
 
-        try{
+        try {
             System.out.println("DIGITE O ID QUE VC DESEJA DELETAR: ");
             Long id = Long.parseLong(input.nextLine());
             petService.findByID(id);
@@ -108,10 +111,9 @@ public class Menu implements CommandLineRunner {
             }
             petService.deletePet(id);
             System.out.println("Pet deletado com sucesso");
-        }catch (ResourceNotFoundException e){
+        } catch (ResourceNotFoundException e) {
             System.out.println(e.getMessage());
         }
-
 
 
         System.out.println("DIGITE O ID QUE VC DESEJA DELETAR: ");
@@ -128,6 +130,62 @@ public class Menu implements CommandLineRunner {
         }
         petService.deletePet(id);
         System.out.println("Pet deletado com sucesso");
+    }
+
+    public void updatePetByID() {
+        try{
+            System.out.println("DIGITE O ID QUE VC DESEJA ATUALIZAR: ");
+            Long id = Long.parseLong(input.nextLine());
+            PetDto byID = petService.findByID(id);
+            System.out.println("Nome: ");
+            String firstName = input.nextLine();
+            if (firstName.isEmpty()){
+                firstName = byID.getFirstName();
+            }
+            System.out.println("Sobrenome: ");
+            String lastName = input.nextLine();
+            if (lastName.isEmpty()){
+                lastName = byID.getLastName();
+            }
+            System.out.println("Idade: ");
+            String ageString = input.nextLine();
+            Integer age;
+            if (!ageString.isEmpty()){
+                age = Integer.parseInt(ageString);
+            }
+            age = byID.getAge();
+            System.out.println("Peso: ");
+            String weightString = input.nextLine();
+            BigDecimal weight;
+            if (!weightString.isEmpty()){
+                weight = BigDecimal.valueOf(Double.parseDouble(weightString));
+            }
+            weight = byID.getWeight();
+            System.out.println("Raça: ");
+            String breed = input.nextLine();
+            if (breed.isEmpty()){
+                breed = byID.getBreed();
+            }
+            System.out.println("Genero [OBRIGATORIO]: ");
+            Gender gender = Gender.valueOf(input.nextLine().toUpperCase());
+            System.out.println("Type [OBRIGATORIO]: ");
+            TypePet typePet = TypePet.valueOf(input.nextLine().toUpperCase());
+            PetDto petDto = PetDto.builder()
+                    .firstName(firstName)
+                    .lastName(lastName)
+                    .age(age)
+                    .weight(weight)
+                    .breed(breed)
+                    .gender(gender)
+                    .typePet(typePet)
+                    .build();
+
+            petService.updatePet(id, petDto);
+
+
+        }catch (ResourceNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 
