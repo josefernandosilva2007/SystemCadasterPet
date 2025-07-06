@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 @Component
 public class Menu implements CommandLineRunner {
@@ -19,9 +20,7 @@ public class Menu implements CommandLineRunner {
     @Autowired
     PetService petService;
     List<PetModel> allPets = new ArrayList<>();
-
     List<PetDto> petDtoList = new ArrayList<>();
-    List<PetDto> filterPetDtoList = null;
 
     Scanner input = new Scanner(System.in);
 
@@ -205,18 +204,22 @@ public class Menu implements CommandLineRunner {
         for (PetModel allPet : allPets.stream().distinct().toList()) {
             petDtoList.add(petService.buildPetModelIntoPetDto(allPet));
         }
-        List<PetDto> listaFiltrada = new ArrayList<>(petDtoList);
+        List<PetDto> filterList = new ArrayList<>(petDtoList);
 
-        if (listaFiltrada.isEmpty()) {
+        if (filterList.isEmpty()) {
             System.out.println("Não há pets cadastrados para buscar.");
             return;
         }
 
-        while (true) {
-            searchMenu();
-            System.out.println("0. Finalizar busca e mostrar resultados");
-            System.out.println("\nESCOLHA UM CRITÉRIO PARA ADICIONAR (ou 0 para sair):");
 
+
+
+        while (true) {
+            System.out.println("\n===================================");
+            System.out.println(filterList.size() + " pet(s) encontrados com os critérios atuais.");
+            formatListPets(filterList); // Mostra a lista atual
+            System.out.println("===================================");
+            searchMenu();
             String op = input.nextLine();
 
             if (op.equals("0")) {
@@ -226,11 +229,27 @@ public class Menu implements CommandLineRunner {
             switch (op) {
                 case "1":
                     System.out.println("DIGITE O NOME OU SOBRENOME:");
-                    listaFiltrada = filterSearchByName(input.nextLine(), listaFiltrada);
+                    filterList = filterSearchByName(input.nextLine(), filterList);
                     break;
                 case "2":
+                    System.out.println("DIGITE O SEXO [MALE/FEMALE]:");
+                    filterList = filterSearchByGender(input.nextLine(), filterList);
+                    break;
+                case "3":
                     System.out.println("DIGITE A IDADE:");
-                    listaFiltrada = filterSearchByAge(input.nextLine(), listaFiltrada);
+                    filterList = filterSearchByAge(input.nextLine(), filterList);
+                    break;
+                case "4":
+                    System.out.println("DIGITE O PESO:");
+                    filterList = filterSearchByWeight(input.nextLine(), filterList);
+                    break;
+                case "5":
+                    System.out.println("DIGITE A RAÇA:");
+                    filterList = filterSearchByBreed(input.nextLine(), filterList);
+                    break;
+                case "6":
+                    System.out.println("DIGITE O TIPO [CAT/DOG]:");
+                    filterList = filterSearchByTypePet(input.nextLine(), filterList);
                     break;
                 default:
                     System.err.println("OPÇÃO INVÁLIDA. Tente novamente.");
@@ -239,7 +258,7 @@ public class Menu implements CommandLineRunner {
         }
 
         System.out.println("\n--- RESULTADO FINAL DA BUSCA ---");
-        formatListPets(listaFiltrada);
+        formatListPets(filterList);
     }
 
 
@@ -249,7 +268,9 @@ public class Menu implements CommandLineRunner {
                 "3. Idade\n" +
                 "4. Peso\n" +
                 "5. Raça\n" +
-                "6. Endereço");
+                "6. Tipo" );
+        System.out.println("0. Finalizar busca e mostrar resultados");
+        System.out.println("\nESCOLHA UM CRITÉRIO PARA ADICIONAR (ou 0 para sair):");
     }
 
     private List<PetDto> filterSearchByName(String search, List<PetDto> petModelList) {
@@ -262,15 +283,35 @@ public class Menu implements CommandLineRunner {
         return petModelList.stream().filter(pet -> pet.getAge().equals(finalSearch)).toList();
     }
 
+    private List<PetDto> filterSearchByWeight(String search, List<PetDto> petModelList) {
+        BigDecimal finalSearch = BigDecimal.valueOf(Double.parseDouble(search));
+        return petModelList.stream().filter(pet -> pet.getWeight().compareTo(finalSearch) == 0).collect(Collectors.toList());
+    }
 
-    public void formatListPets(List<PetDto> listaFiltrada) {
-        if (listaFiltrada.isEmpty()) {
+    private List<PetDto> filterSearchByGender(String search, List<PetDto> petModelList) {
+        String finalSearch = search.toUpperCase();
+        return petModelList.stream().filter(pet -> pet.getGender().equals(Gender.valueOf(finalSearch))).toList();
+    }
+
+    private List<PetDto> filterSearchByBreed(String search, List<PetDto> petModelList) {
+        String finalSearch = search.toUpperCase();
+        return petModelList.stream().filter(pet -> pet.getBreed().contains(finalSearch)).toList();
+    }
+
+    private List<PetDto> filterSearchByTypePet(String search, List<PetDto> petModelList) {
+        String finalSearch = search.toUpperCase();
+        return petModelList.stream().filter(pet -> pet.getTypePet().equals(TypePet.valueOf(finalSearch))).toList();
+    }
+
+
+    public void formatListPets(List<PetDto> filterList) {
+        if (filterList.isEmpty()) {
             System.out.println("Nenhum pet encontrado com os critérios selecionados.");
             return;
         }
 
         int contador = 1;
-        for (PetDto pet : listaFiltrada) {
+        for (PetDto pet : filterList) {
             String formattedPet = String.format(
                     "%d. %s - %s - %s - %s, - %d years - %s.kg - %s",
                     contador++,
