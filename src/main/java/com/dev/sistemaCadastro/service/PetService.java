@@ -53,7 +53,16 @@ public class PetService {
         }
 
     }
-
+    public PetDto buildPetModelIntoPetDto(PetModel petModel) {
+        return PetDto.builder().firstName(petModel.getFirstName())
+                .lastName(petModel.getLastName())
+                .age(petModel.getAge())
+                .weight(petModel.getWeight())
+                .breed(petModel.getBreed())
+                .gender(petModel.getGender())
+                .typePet(petModel.getTypePet())
+                .build();
+    }
 
     @Transactional(readOnly = true)
     public PetDto findByID(Long id) {
