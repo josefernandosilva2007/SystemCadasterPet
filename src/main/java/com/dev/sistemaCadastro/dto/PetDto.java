@@ -3,7 +3,6 @@ package com.dev.sistemaCadastro.dto;
 
 import com.dev.sistemaCadastro.domain.Gender;
 import com.dev.sistemaCadastro.domain.TypePet;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -21,5 +20,8 @@ public class PetDto {
     public String  breed;
     public Gender gender;
     public TypePet typePet;
+    public String city;
+    public String street;
+    public String numberHouse;
 }
 

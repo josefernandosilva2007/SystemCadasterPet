@@ -1,5 +1,7 @@
-package com.dev.sistemaCadastro.domain;
+package com.dev.sistemaCadastro.console;
 
+import com.dev.sistemaCadastro.domain.Gender;
+import com.dev.sistemaCadastro.domain.TypePet;
 import com.dev.sistemaCadastro.dto.PetDto;
 import com.dev.sistemaCadastro.exceptions.ResourceNotFoundException;
 import com.dev.sistemaCadastro.model.PetModel;
@@ -85,6 +87,14 @@ public class Menu implements CommandLineRunner {
         Gender gender = Gender.valueOf(input.nextLine().toUpperCase());
         System.out.println("Type: ");
         TypePet typePet = TypePet.valueOf(input.nextLine().toUpperCase());
+        System.out.println("Numero da Casa: ");
+        String numberHouse = input.nextLine();
+        System.out.println("Rua: ");
+        String street = input.nextLine();
+        System.out.println("Cidade");
+        String city = input.nextLine();
+
+
 
         PetDto petDto = PetDto.builder()
                 .firstName(firstName)
@@ -94,6 +104,9 @@ public class Menu implements CommandLineRunner {
                 .breed(breed)
                 .gender(gender)
                 .typePet(typePet)
+                .numberHouse(numberHouse)
+                .street(street)
+                .city(city)
                 .build();
 
         petService.savePet(petDto);
@@ -180,6 +193,15 @@ public class Menu implements CommandLineRunner {
             Gender gender = Gender.valueOf(input.nextLine().toUpperCase());
             System.out.println("Type [OBRIGATORIO]: ");
             TypePet typePet = TypePet.valueOf(input.nextLine().toUpperCase());
+            System.out.println("Numero da Casa: ");
+            String numberHouse = input.nextLine();
+
+            System.out.println("Rua:");
+            String street = input.nextLine();
+
+            System.out.println("Cidade:");
+            String city = input.nextLine();
+
             PetDto petDto = PetDto.builder()
                     .firstName(firstName)
                     .lastName(lastName)
@@ -188,6 +210,9 @@ public class Menu implements CommandLineRunner {
                     .breed(breed)
                     .gender(gender)
                     .typePet(typePet)
+                    .numberHouse(numberHouse)
+                    .street(street)
+                    .city(city)
                     .build();
 
             petService.updatePet(id, petDto);

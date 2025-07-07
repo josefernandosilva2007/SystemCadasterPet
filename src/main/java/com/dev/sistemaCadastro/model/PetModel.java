@@ -26,7 +26,14 @@ public class PetModel implements Serializable {
     Integer age;
     BigDecimal weight;
     String breed;
+    @NotNull
     Gender gender;
+    @NotNull
     TypePet typePet;
+    @NotNull
+    String city;
+    @NotNull
+    String street;
+    String numberHouse;
 
 }

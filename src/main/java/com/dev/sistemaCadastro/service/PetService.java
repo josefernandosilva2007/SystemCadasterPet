@@ -47,6 +47,9 @@ public class PetService {
                     .breed(petModel.getBreed())
                     .gender(petModel.getGender())
                     .typePet(petModel.getTypePet())
+                    .numberHouse(petModel.getNumberHouse())
+                    .street(petModel.getStreet())
+                    .city(petModel.getCity())
                     .build();
             System.out.println("ID: " + petModel.getId());
             System.out.println(build);
@@ -74,6 +77,9 @@ public class PetService {
                 .breed(petModel.getBreed())
                 .gender(petModel.getGender())
                 .typePet(petModel.getTypePet())
+                .numberHouse(petModel.getNumberHouse())
+                .street(petModel.getStreet())
+                .city(petModel.getCity())
                 .build();
     }
 
