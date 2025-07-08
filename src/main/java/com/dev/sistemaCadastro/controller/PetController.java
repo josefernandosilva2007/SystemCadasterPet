@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class PetController {
@@ -20,7 +21,7 @@ public class PetController {
 
     @PostMapping("/pet")
     public ResponseEntity<PetModel> savePet(@RequestBody @Valid PetDto petDto){
-        return petService.savePet(petDto);
+        return ResponseEntity.status(HttpStatus.OK).body(petService.savePet(petDto));
     }
 
     @GetMapping("/pet")
@@ -30,12 +31,22 @@ public class PetController {
 
     @DeleteMapping("/pet/{id}")
     public ResponseEntity<Object> deletePetByID(@PathVariable(value = "id") Long id){
-        return petService.deletePet(id);
+        Optional<PetModel> onePetByID = petService.getOnePetByID(id);
+        if (onePetByID.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pet not Found");
+        }
+        petService.deletePet(id);
+        return ResponseEntity.status(HttpStatus.OK).body("Pet Deleted Successfully");
     }
 
     @PutMapping("/pet/{id}")
     public ResponseEntity<Object> updatePetByID(@PathVariable(value = "id") Long id,
                                                 @RequestBody @Valid PetDto petDto){
-        return petService.updatePet(id,petDto);
+        Optional<PetModel> onePetByID = petService.getOnePetByID(id);
+        if (onePetByID.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pet not Found");
+        }
+        petService.updatePet(id, petDto);
+        return ResponseEntity.status(HttpStatus.OK).body("Pet Updated Successfully");
     }
 }

@@ -12,13 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class PetService {
@@ -26,10 +23,10 @@ public class PetService {
     PetRepository petRepository;
     PetDto petDto;
 
-    public ResponseEntity<PetModel> savePet(@RequestBody @Valid PetDto petDto) {
+    public PetModel savePet(@RequestBody @Valid PetDto petDto) {
         var petModel = new PetModel();
         BeanUtils.copyProperties(petDto, petModel);
-        return ResponseEntity.status(HttpStatus.CREATED).body(petRepository.save(petModel));
+        return petRepository.save(petModel);
     }
 
     public List<PetModel> getAllPets() {
@@ -83,38 +80,18 @@ public class PetService {
                 .build();
     }
 
-
-    public ResponseEntity<Object> filterPetListByFirstName(@PathVariable(value = "first_name") String petName) {
-        List<PetModel> filterList = new ArrayList<>();
-        List<PetModel> petList = petRepository.findAll();
-        if (!petList.isEmpty()) {
-            for (PetModel pet : petList) {
-                if (pet.getFirstName().contains(petName)) {
-                    filterList.add(pet);
-                }
-            }
-            if (!filterList.isEmpty()) return ResponseEntity.status(HttpStatus.OK).body(filterList);
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pet Not Found");
+    public void deletePet(Long id) {
+        petRepository.deleteById(id);
     }
 
-    public ResponseEntity<Object> deletePet(Long id) {
-        Optional<PetModel> petOp = petRepository.findById(id);
-        if (petOp.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pet not Found");
-        }
-        petRepository.delete(petOp.get());
-        return ResponseEntity.status(HttpStatus.OK).body("Pet Delete Sucessfully");
+    public Optional<PetModel> getOnePetByID(Long id){
+        return petRepository.findById(id);
     }
 
-    public ResponseEntity<Object> updatePet(Long id, PetDto petDto) {
-        Optional<PetModel> petOp = petRepository.findById(id);
-        if (petOp.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pet NOT FOUND");
-        }
+    public void updatePet(Long id, PetDto petDto) {
         var petModel = new PetModel();
         BeanUtils.copyProperties(petDto, petModel);
         deletePet(id);
-        return ResponseEntity.status(HttpStatus.CREATED).body(petRepository.save(petModel));
+        petRepository.save(petModel);
     }
 }
