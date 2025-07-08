@@ -67,7 +67,7 @@ public class PetService {
     @Transactional(readOnly = true)
     public PetDto findByID(Long id) {
         PetModel petModel = petRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Pet nao encontrado"));
-        return  PetDto.builder().firstName(petModel.getFirstName())
+        return PetDto.builder().firstName(petModel.getFirstName())
                 .lastName(petModel.getLastName())
                 .age(petModel.getAge())
                 .weight(petModel.getWeight())
@@ -81,7 +81,9 @@ public class PetService {
     }
 
     public void deletePet(Long id) {
-        petRepository.deleteById(id);
+        PetModel pet = petRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Pet com ID " + id + " não encontrado."));
+        petRepository.delete(pet);
     }
 
     public Optional<PetModel> getOnePetByID(Long id){
