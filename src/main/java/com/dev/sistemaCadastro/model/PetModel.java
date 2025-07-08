@@ -5,6 +5,7 @@ import com.dev.sistemaCadastro.domain.Gender;
 import com.dev.sistemaCadastro.domain.TypePet;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +17,7 @@ import java.util.UUID;
 @Table(name = "PETS")
 @Getter
 @Setter
+@EqualsAndHashCode
 public class PetModel implements Serializable {
 
     @Id
@@ -35,5 +37,8 @@ public class PetModel implements Serializable {
     @NotNull
     String street;
     String numberHouse;
+
+
+
 
 }

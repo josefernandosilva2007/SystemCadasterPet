@@ -21,7 +21,7 @@ public class PetController {
 
     @PostMapping("/pet")
     public ResponseEntity<PetModel> savePet(@RequestBody @Valid PetDto petDto){
-        return ResponseEntity.status(HttpStatus.OK).body(petService.savePet(petDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(petService.savePet(petDto));
     }
 
     @GetMapping("/pet")
